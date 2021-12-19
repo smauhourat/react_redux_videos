@@ -8,14 +8,17 @@ import VideoDetails from './VideoDetails';
 class App extends Component {
     state = { videos: [], selectedVideo: null };
 
+    componentDidMount() {
+        this.onTermSubmit('casas');
+    }
+
     onTermSubmit = async (term) => {
         const response = await youtube.get('/search', {
             params: {
                 q: term
             }
         });
-        this.setState({ videos: response.data.items });
-        console.log(response.data.items);
+        this.setState({ videos: response.data.items, selectedVideo: response.data.items[0] });
     };
 
     onVideoSelect = (video) => {
@@ -27,8 +30,16 @@ class App extends Component {
             <div className="ui content" style={{margin: '10px'}}>
                 <SearchBar onFormSubmit={this.onTermSubmit} />
                 Found: {this.state.videos.length} videos
-                <VideoDetails video={this.state.selectedVideo}/>
-                <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos}/>
+                <div className="ui grid">
+                    <div className="ui row">
+                        <div class="eleven wide column">
+                            <VideoDetails video={this.state.selectedVideo}/>
+                        </div>
+                        <div class="five wide column">
+                            <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos}/>
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
